@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreign('id_sub_category')->references('id_sub_category')->on('sub_categories')
                 ->onUpdate('cascade');
             $table->decimal('amount', 15, 2);
+            $table->decimal('addicional_amount', 15, 2)->default(0);
           
             $table->timestamps();
         });

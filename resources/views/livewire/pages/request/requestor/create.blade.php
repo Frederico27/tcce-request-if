@@ -28,6 +28,20 @@
                         <div class="px-4 py-5 sm:p-6">
                             <form wire:submit.prevent="save">
 
+                                <!-- Activity Field -->
+                                <div class="mb-6">
+                                    <label for="activity"
+                                        class="block text-sm font-medium text-gray-700 mb-2">Activity</label>
+                                    <div class="relative">
+                                        <textarea wire:model="activity" id="activity" rows="4"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out text-gray-700 bg-white resize-none"
+                                            placeholder="Masukkan activity..."></textarea>
+                                    </div>
+                                    @error('activity')
+                                        <span class="mt-1.5 text-sm font-medium text-red-600 block">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
                                 <!-- Description Field -->
                                 <div class="mb-6">
                                     <label for="description"

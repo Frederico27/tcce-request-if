@@ -16,18 +16,24 @@ class TelegramService
         $this->chatId = config('services.telegram.chat_id');
     }
 
-    public function sendMessage(string $message, ?string $chatId = null): bool
+    public function sendMessage(string $message, ?string $chatId = null, array $keyboard = null): bool
     {
         if (!$this->botToken || (!$this->chatId && !$chatId)) {
             return false;
         }
 
         try {
-            Http::post("https://api.telegram.org/bot{$this->botToken}/sendMessage", [
+            $payload = [
                 'chat_id' => $chatId ?? $this->chatId,
                 'text' => $message,
-                'parse_mode' => 'Markdown'
-            ]);
+                'parse_mode' => 'Markdown',
+            ];
+
+            if ($keyboard) {
+                $payload['reply_markup'] = json_encode($keyboard);
+            }
+
+            Http::post("https://api.telegram.org/bot{$this->botToken}/sendMessage", $payload);
 
             return true;
         } catch (\Exception $e) {
@@ -35,4 +41,5 @@ class TelegramService
             return false;
         }
     }
+
 }

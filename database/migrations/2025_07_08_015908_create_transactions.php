@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->uuid('id_transactions')->primary();
             $table->enum('action', ['request', 'return', 'transfer']);
+            $table->string('activity', 255);
             $table->string('description', 255);
             $table->decimal('amount', 15, 2)->default(0);
             $table->decimal('remaining_amount', 15, 2)->default(0);

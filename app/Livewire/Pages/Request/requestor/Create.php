@@ -8,6 +8,7 @@ class Create extends Component
 {
 
     public $description;
+    public $activity;
     public $amount;
     public $action = 'request';
     public $requested_by;
@@ -29,6 +30,7 @@ class Create extends Component
         $transaction = new \App\Models\Transactions();
         $transaction->id_transactions = \Illuminate\Support\Str::uuid();
         $transaction->description = $this->description;
+        $transaction->activity = $this->activity;   
         $transaction->amount = $this->amount;
         $transaction->action = $this->action;
         $transaction->from_user_id = 1;

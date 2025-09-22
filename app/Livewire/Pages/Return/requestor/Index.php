@@ -40,13 +40,24 @@ class Index extends Component
         $message = "🔔 *New Transaction Submitted*\n\n"
         . "📋 *Transaction ID:* {$transaction->id_transactions}\n"
         . "📦 *Action:* " . ucfirst($transaction->action) . "\n"
+        . "🎯 *Activity:* " . $transaction->activity . "\n"
         . "💰 *Amount:* $" . number_format($transaction->amount, 2) . "\n"
         . "📝 *Description:* " . $transaction->description . "\n"
         . "📅 *Date:* " . $transaction->created_at->format('d/m/Y H:i') . "\n"
         . "🔄 *Status:* Pending Review\n\n"
         . "Please review this transaction in the admin panel.";
 
-        app('App\Services\TelegramService')->sendMessage($message);
+        $keyboard = [
+            'inline_keyboard' => [
+                [
+                    ['text' => '✅ Approve', 'url' => route('transactions.index')],
+                    ['text' => '❌ Reject',  'url' => route('transactions.index')],
+                ]
+            ]
+        ];
+        
+
+        app('App\Services\TelegramService')->sendMessage($message, null, $keyboard);
 
         flash()->success('Transaksi berhasil diajukan.');
 

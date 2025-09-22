@@ -17,6 +17,7 @@ class Transactions extends Model
         'id_transactions',
         'action',
         'type',
+        'activity',
         'description',
         'amount',
         'remaining_amount',
