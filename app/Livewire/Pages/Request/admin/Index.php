@@ -21,8 +21,9 @@ class Index extends Component
     public $rejectReason = '';
     public $dateFrom;
     public $dateTo;
-   
-    public function clearDateFilter(){
+
+    public function clearDateFilter()
+    {
         $this->dateFrom = null;
         $this->dateTo = null;
     }
@@ -42,12 +43,13 @@ class Index extends Component
     }
 
 
-    public function rejectConfirmation($id){
+    public function rejectConfirmation($id)
+    {
 
-            // Validate the rejected
-            $this->validate([
-                'rejectReason' => 'required|string|max:255',
-            ]);
+        // Validate the rejected
+        $this->validate([
+            'rejectReason' => 'required|string|max:255',
+        ]);
 
         $this->confirm(
             title: 'Apakah yakin ingin menolak transaksi ini?',
@@ -97,7 +99,7 @@ class Index extends Component
         return $this->redirect(route('transactions.index'), navigate: true);
     }
 
-    
+
 
     #[On('rejectTable')]
     public function rejectedInTable(array $data)
@@ -122,7 +124,8 @@ class Index extends Component
 
 
     #[On('approveReturnTable')]
-    public function approvedReturn(array $data){
+    public function approvedReturn(array $data)
+    {
 
         $this->transaction = Transactions::where('id_transactions', $data['id'])->first();
         if (!$this->transaction) {
@@ -141,7 +144,6 @@ class Index extends Component
 
         flash()->success('Return Transaction approved successfully.');
         return $this->redirect(route('transactions.index'), navigate: true);
-
     }
 
     public function render()
@@ -164,11 +166,11 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        if($this->dateFrom){
+        if ($this->dateFrom) {
             $query->whereDate('created_at', '>=', $this->dateFrom);
         }
 
-        if($this->dateTo){
+        if ($this->dateTo) {
             $query->whereDate('created_at', '<=', $this->dateTo);
         }
 
