@@ -7,7 +7,7 @@ use App\Models\SubCategories;
 use App\Models\TransactionAttachment;
 use App\Models\TransactionDetails;
 use App\Models\Transactions;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -24,11 +24,23 @@ class Create extends Component
     public $amount;
     public $description;
     public $filteredSubCategories = [];
+    public $items = []; // dynamic items for multiple returns
 
     public function mount()
     {
         $this->id = request()->get('id');
         $this->loadSubCategories();
+        // initialize with one empty item
+        $this->items = [
+            [
+                'image' => null,
+                'description' => '',
+                'amount' => null,
+                'category' => null,
+                'id_sub_category' => null,
+                'filteredSubCategories' => [],
+            ]
+        ];
     }
 
     // Update this method to properly handle the category update
@@ -72,46 +84,106 @@ class Create extends Component
         }
     }
 
+    // Handle dynamic item category change
+    public function updated($propertyName, $value)
+    {
+        // Expecting property like items.0.category
+        if (str_starts_with($propertyName, 'items.')) {
+            $parts = explode('.', $propertyName);
+            // parts: ['items', '{index}', '{field}'] or ['items','{index}']
+            if (count($parts) >= 3) {
+                $index = $parts[1];
+                $field = $parts[2];
+                if ($field === 'category') {
+                    $cat = $value;
+                    if ($cat) {
+                        $subs = SubCategories::where('id_category', $cat)
+                            ->select('id_sub_category', 'sub_category_name')
+                            ->get()
+                            ->toArray();
+                    } else {
+                        $subs = [];
+                    }
+                    // ensure index exists
+                    if (!isset($this->items[$index])) {
+                        return;
+                    }
+                    $this->items[$index]['filteredSubCategories'] = $subs;
+                    $this->items[$index]['id_sub_category'] = null;
+                }
+            }
+        }
+    }
+
+    public function addItem()
+    {
+        $this->items[] = [
+            'image' => null,
+            'description' => '',
+            'amount' => null,
+            'category' => null,
+            'id_sub_category' => null,
+            'filteredSubCategories' => [],
+        ];
+    }
+
+    public function removeItem($index)
+    {
+        if (isset($this->items[$index])) {
+            // cleanup temporary uploaded file if any
+            // Livewire handles temp uploads; unset is enough
+            unset($this->items[$index]);
+            $this->items = array_values($this->items);
+        }
+    }
+
 
     public function save()
     {
         try {
-            
+            // Validate all items
             $this->validate([
-                'description' => 'required|string|max:255',
-                'amount' => 'required|numeric|min:0',
-                'id_sub_category' => 'required|exists:sub_categories,id_sub_category',
-                'image' => 'required|image|max:2048', // Optional image upload
+                'items' => 'required|array|min:1',
+                'items.*.description' => 'required|string|max:255',
+                'items.*.amount' => 'required|numeric|min:0',
+                'items.*.id_sub_category' => 'required|exists:sub_categories,id_sub_category',
+                'items.*.image' => 'required|image|max:2048',
             ]);
 
-            $amountTransaction = Transactions::find($this->id)->select('amount')->first();
-            $totalamountUploaded = TransactionDetails::where('id_transactions', $this->id)->sum('amount');
 
-            $totalamountUploaded += $this->amount;
-            
-            if($totalamountUploaded > $amountTransaction->amount){
-                flash()->error('Total amount detail melebihi jumlah transaksi.');
-                return;
-            }
+            //Limit amount 
+            // $amountTransaction = Transactions::where('id_transactions', $this->id)->first();
+            // $totalAmountUploaded = TransactionDetails::where('id_transactions', $this->id)->sum('amount');
+
+            // Calculate total amount from all items
+            // $totalNewAmount = collect($this->items)->sum('amount');
+
+
+            // if (($totalAmountUploaded + $totalNewAmount) > $amountTransaction->amount) {
+            //     flash()->error('Total amount detail melebihi jumlah transaksi.');
+            //     return;
+            // }
 
             DB::beginTransaction();
 
-            $detailTransaction = TransactionDetails::create([
-                'id_transactions' => $this->id,
-                'used_for' => $this->description,
-                'amount' => $this->amount,
-                'id_sub_category' => $this->id_sub_category,
-            ]);
-
-            if ($this->image) {
-                $imagePath = $this->image->store('/buktiReturn', 'public');
-                TransactionAttachment::create([
-                    'id_transaction_detail' => $detailTransaction->id_transaction_detail,
-                    'file_path' => $imagePath,
-                    'file_type' => 'image',
-                    'uploaded_by' => 'Riko',
+            // Save each item
+            foreach ($this->items as $item) {
+                $detailTransaction = TransactionDetails::create([
+                    'id_transactions' => $this->id,
+                    'used_for' => $item['description'],
+                    'amount' => $item['amount'],
+                    'id_sub_category' => $item['id_sub_category'],
                 ]);
 
+                if (isset($item['image']) && $item['image']) {
+                    $imagePath = $item['image']->store('/buktiReturn', 'public');
+                    TransactionAttachment::create([
+                        'id_transaction_detail' => $detailTransaction->id_transaction_detail,
+                        'file_path' => $imagePath,
+                        'file_type' => 'image',
+                        'uploaded_by' => 'Riko',
+                    ]);
+                }
             }
 
             DB::commit();

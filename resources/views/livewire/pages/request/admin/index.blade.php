@@ -25,8 +25,8 @@
                             <button @click="open = !open"
                                 class="flex items-center text-gray-500 hover:text-gray-700 focus:outline-none"
                                 aria-label="Notifications">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
@@ -48,7 +48,8 @@
                                 <!-- Notifications List -->
                                 <div class="max-h-60 sm:max-h-64 overflow-y-auto">
                                     <!-- Unread Notification -->
-                                    <a href="#" class="block px-4 py-3 hover:bg-gray-50 border-l-4 border-blue-500">
+                                    <a href="#"
+                                        class="block px-4 py-3 hover:bg-gray-50 border-l-4 border-blue-500">
                                         <p class="text-sm font-medium text-gray-900">Permintaan Baru</p>
                                         <p class="text-xs text-gray-500 mt-1">Ada permintaan baru dari departemen IT
                                         </p>
@@ -85,7 +86,8 @@
                             <div class="flex items-center justify-between sm:justify-start">
                                 <div class="mr-3">
                                     <span class="text-xs sm:text-sm font-medium text-gray-500">Saldo:</span>
-                                    <span class="text-base sm:text-lg font-semibold text-gray-900">${{ $saldo->balance }}</span>
+                                    <span
+                                        class="text-base sm:text-lg font-semibold text-gray-900">${{ $saldo->balance }}</span>
                                 </div>
                                 <div class="flex items-center">
                                     <span
@@ -102,8 +104,8 @@
             <!-- Main Content Area -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                  <!-- Search and Filter Controls -->
-                  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                    <!-- Search and Filter Controls -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
                         <div class="p-4 sm:p-6">
                             <div
                                 class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-4">
@@ -135,11 +137,13 @@
                                                 class="block w-full pl-3 pr-3 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white"
                                                 placeholder="Sampai tanggal">
                                         </div>
-                                        @if($dateFrom || $dateTo)
+                                        @if ($dateFrom || $dateTo)
                                             <button wire:click="clearDateFilter" type="button"
                                                 class="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                <svg class="h-4 w-4" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                                                 </svg>
                                             </button>
                                         @endif
@@ -292,11 +296,15 @@
                                                     <div class="ml-4">
                                                         <div class="text-sm font-medium">
                                                             @php
-                                                                $statusText = str_replace('_', ' ', $transaction->status);
+                                                                $statusText = str_replace(
+                                                                    '_',
+                                                                    ' ',
+                                                                    $transaction->status,
+                                                                );
                                                                 $statusText = ucwords($statusText);
                                                             @endphp
 
-                                                            @if($transaction->status == 'admin_approved')
+                                                            @if ($transaction->status == 'admin_approved')
                                                                 <span
                                                                     class="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
                                                                     {{ $statusText }}
@@ -335,7 +343,8 @@
                                             <!-- Rejection Modal -->
                                             <div x-data="{ show: @entangle('showRejectModal') }" x-show="show" x-cloak
                                                 class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center"
-                                                style="background-color: rgba(0, 0, 0, 0.5);" @click.self="show = false">
+                                                style="background-color: rgba(0, 0, 0, 0.5);"
+                                                @click.self="show = false">
                                                 <!-- <-- Only triggers when clicking the background -->
 
                                                 <!-- Modal Content -->
@@ -346,11 +355,12 @@
                                                         <label class="block text-sm font-medium text-gray-700 mb-1">
                                                             Reason for rejection
                                                         </label>
-                                                        <textarea wire:model.defer="rejectReason" class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-700 
+                                                        <textarea wire:model.defer="rejectReason"
+                                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-700 
                                                      bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 
                                                      focus:ring-indigo-500 focus:border-transparent resize-none 
-                                                     transition duration-200 ease-in-out" rows="4"
-                                                            placeholder="Masukkan alasan penolakan..."></textarea>
+                                                     transition duration-200 ease-in-out"
+                                                            rows="4" placeholder="Masukkan alasan penolakan..."></textarea>
                                                         @error('rejectReason')
                                                             <span class="text-red-500 text-sm">{{ $message }}</span>
                                                         @enderror
@@ -365,6 +375,93 @@
                                                             wire:click="rejectConfirmation('{{ $transaction->id_transactions }}')"
                                                             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                                                             Ajukan Penolakan
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Additional Amount Modal -->
+                                            <div x-data="{ show: @entangle('showAdditionalAmountModal') }" x-show="show" x-cloak
+                                                class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center"
+                                                style="background-color: rgba(0, 0, 0, 0.5);">
+                                                <!-- Modal Content -->
+                                                <div
+                                                    class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 my-8">
+                                                    <div class="flex justify-between items-center mb-4">
+                                                        <h3 class="text-lg font-medium">Verifikasi Transaksi</h3>
+                                                        <button wire:click="closeAdditionalAmountModal" type="button"
+                                                            class="text-gray-400 hover:text-gray-500">
+                                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                                                stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                                                        <div class="flex">
+                                                            <div class="flex-shrink-0">
+                                                                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20"
+                                                                    fill="currentColor">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                                        clip-rule="evenodd"></path>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="ml-3">
+                                                                <p class="text-sm text-blue-700">
+                                                                    Jika ada biaya tambahan yang diperlukan di luar
+                                                                    jumlah yang diminta, Anda dapat menambahkannya di
+                                                                    sini. Ini opsional.
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                            Jumlah Tambahan (Opsional)
+                                                        </label>
+                                                        <div class="mt-1 relative rounded-md shadow-sm">
+                                                            <div
+                                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                                            </div>
+                                                            <input type="number" inputmode="decimal"
+                                                                wire:model.defer="additionalAmount" min="0"
+                                                                step="0.01"
+                                                                class="block w-full pl-7 pr-12 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                                                placeholder="0.00">
+                                                        </div>
+                                                        @error('additionalAmount')
+                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+
+                                                    <div class="mb-4">
+                                                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                                                            Alasan Penambahan (Diperlukan jika jumlah tambahan diisi)
+                                                        </label>
+                                                        <textarea wire:model.defer="additionalAmountReason"
+                                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-700 
+                                                            bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 
+                                                            focus:ring-blue-500 focus:border-transparent resize-none 
+                                                            transition duration-200 ease-in-out"
+                                                            rows="3" placeholder="Jelaskan alasan penambahan jumlah..."></textarea>
+                                                        @error('additionalAmountReason')
+                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+
+                                                    <div class="flex justify-end space-x-3 mt-6">
+                                                        <button wire:click="closeAdditionalAmountModal"
+                                                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                                                            Batal
+                                                        </button>
+                                                        <button wire:click="submitAdditionalAmount"
+                                                            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                                                            Verifikasi Transaksi
                                                         </button>
                                                     </div>
                                                 </div>
@@ -389,21 +486,193 @@
                                                 @endif
 
                                                 <!-- Verify button - shown only when status is 'admin_approved' -->
-                                                @if($transaction->status == 'manager_approved' && $transaction->action == 'request')
+                                                @if ($transaction->status == 'manager_approved' && $transaction->action == 'request')
                                                     <button
                                                         wire:click="verifyConfirmation('{{ $transaction->id_transactions }}')"
                                                         class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded mr-1">
-                                                        Verify
+                                                        Verify f
                                                     </button>
                                                 @endif
 
-                                                  <!-- Verify button - shown only when status is 'admin_approved' -->
-                                                  @if($transaction->status == 'pending' && $transaction->action == 'return')
-                                                    <button
-                                                        wire:click="approveReturnConfirmation('{{ $transaction->id_transactions }}')"
-                                                        class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded mr-1">
-                                                        Verify
-                                                    </button>
+                                                <!-- Verify button - shown only when status is 'admin_approved' -->
+                                                @if ($transaction->status == 'pending' && $transaction->action == 'return')
+                                                    <div x-data="{ modalOpen: false }"
+                                                        @keydown.escape.window="modalOpen = false"
+                                                        class="z-50 w-auto h-auto inline-block">
+                                                        <button @click="modalOpen=true"
+                                                            class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-1 px-2 rounded mr-1">
+                                                            Verify l
+                                                        </button>
+                                                        <template x-teleport="body">
+                                                            <div x-show="modalOpen"
+                                                                class="fixed top-0 left-0 z-[99] flex items-center justify-center w-screen h-screen"
+                                                                x-cloak>
+                                                                <div x-show="modalOpen"
+                                                                    x-transition:enter="ease-out duration-300"
+                                                                    x-transition:enter-start="opacity-0"
+                                                                    x-transition:enter-end="opacity-100"
+                                                                    x-transition:leave="ease-in duration-300"
+                                                                    x-transition:leave-start="opacity-100"
+                                                                    x-transition:leave-end="opacity-0"
+                                                                    @click="modalOpen=false"
+                                                                    class="absolute inset-0 w-full h-full bg-black/40">
+                                                                </div>
+                                                                <div x-show="modalOpen"
+                                                                    x-trap.inert.noscroll="modalOpen"
+                                                                    x-transition:enter="ease-out duration-300"
+                                                                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                                                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                                                                    x-transition:leave="ease-in duration-200"
+                                                                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                                                                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                                                                    class="relative px-7 py-6 w-full bg-white sm:max-w-lg sm:rounded-lg">
+                                                                    <div
+                                                                        class="flex justify-between items-center pb-2">
+                                                                        <h3 class="text-lg font-semibold">Verifikasi
+                                                                            Transaksi</h3>
+                                                                        <button @click="modalOpen=false"
+                                                                            class="flex absolute top-0 right-0 justify-center items-center mt-5 mr-5 w-8 h-8 text-gray-600 rounded-full hover:text-gray-800 hover:bg-gray-50">
+                                                                            <svg class="w-5 h-5"
+                                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                                fill="none" viewBox="0 0 24 24"
+                                                                                stroke-width="1.5"
+                                                                                stroke="currentColor">
+                                                                                <path stroke-linecap="round"
+                                                                                    stroke-linejoin="round"
+                                                                                    d="M6 18L18 6M6 6l12 12" />
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="relative w-auto">
+                                                                        <div
+                                                                            class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                                                                            <div class="flex">
+                                                                                <div class="flex-shrink-0">
+                                                                                    <svg class="h-5 w-5 text-blue-400"
+                                                                                        viewBox="0 0 20 20"
+                                                                                        fill="currentColor">
+                                                                                        <path fill-rule="evenodd"
+                                                                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                                                            clip-rule="evenodd"></path>
+                                                                                    </svg>
+                                                                                </div>
+                                                                                <div class="ml-3">
+                                                                                    @if($transaction->additional_amount > 0)
+                                                                                    <p class="text-sm text-blue-700">
+                                                                                       Transaksi ini memiliki jumlah tambahan sebesar ${{ abs($transaction->additional_amount) }}.
+                                                                                       Tolong kembalikan dana sesuai dengan total yang tertera di bawah.
+                                                                                    </p>
+                                                                                    @elseif ($transaction->remaining_amount > 0)
+                                                                                        <p class="text-sm text-blue-700">
+                                                                                       Transaksi ini memiliki sisa jumlah sebesar ${{ abs($transaction->remaining_amount) }}.
+                                                                                       Dana tersisa akan terakumulasi ke saldo admin setelah diverifikasi.
+                                                                                    </p>
+                                                                                    @else
+                                                                                     <p class="text-sm text-blue-700">
+                                                                                        Tidak ada jumlah tambahan atau sisa dana untuk transaksi ini.
+                                                                                     </p>
+                                                                                    @endif
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="text-sm space-y-1">
+                                                                            @if ($transaction->action == 'return')
+                                                                                @php
+                                                                                    $detailsAmount = \App\Models\TransactionDetails::where(
+                                                                                        'id_transactions',
+                                                                                        $transaction->id_transactions,
+                                                                                    )->sum('amount');
+                                                                                    $totalReturned =
+                                                                                        ($transaction->remaining_amount ??
+                                                                                            0) +
+                                                                                        ($transaction->additional_amount ??
+                                                                                            0);
+                                                                                @endphp
+                                                                                <div class="flex justify-between">
+                                                                                    <span class="text-gray-600">Dana
+                                                                                        Diminta:</span>
+                                                                                    <span
+                                                                                        class="font-medium text-gray-900">${{ number_format($transaction->amount, 2) }}</span>
+                                                                                </div>
+                                                                                <div class="flex justify-between">
+                                                                                    <span class="text-gray-600">Dana
+                                                                                        Digunakan:</span>
+                                                                                    <span
+                                                                                        class="font-medium text-blue-600">${{ number_format($detailsAmount, 2) }}</span>
+                                                                                </div>
+                                                                                @if ($transaction->remaining_amount > 0)
+                                                                                    <div class="flex justify-between">
+                                                                                        <span
+                                                                                            class="text-gray-600">Dana
+                                                                                            Tersisa:</span>
+                                                                                        <span
+                                                                                            class="font-medium text-green-600">${{ number_format($transaction->remaining_amount, 2) }}</span>
+                                                                                    </div>
+                                                                                @endif
+                                                                                @if ($transaction->additional_amount > 0)
+                                                                                    <div class="flex justify-between">
+                                                                                        <span
+                                                                                            class="text-gray-600">Dana
+                                                                                            Tambahan:</span>
+                                                                                        <span
+                                                                                            class="font-medium text-orange-600">${{ number_format($transaction->additional_amount, 2) }}</span>
+                                                                                    </div>
+                                                                                @endif
+                                                                                @if ($transaction->additional_amount <= 0)
+                                                                                    <div
+                                                                                        class="flex justify-between pt-1 border-t border-gray-200">
+                                                                                        <span
+                                                                                            class="text-gray-700 font-semibold flex items-center">
+                                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                                class="h-5 w-5 text-gray-600 mr-1"
+                                                                                                viewBox="0 0 20 20"
+                                                                                                fill="currentColor">
+                                                                                                <path fill-rule="evenodd"
+                                                                                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                                                                    clip-rule="evenodd"></path>
+                                                                                            </svg>
+                                                                                            Total Tersisa:
+                                                                                        </span>
+                                                                                        <span
+                                                                                            class="font-bold text-purple-600">${{ number_format($transaction->remaining_amount, 2) }}</span>
+                                                                                    </div>
+                                                                                @endif
+
+
+                                                                                @if ($transaction->additional_amount > 0)
+                                                                                    <div
+                                                                                        class="flex justify-between pt-1 border-t border-gray-200">
+                                                                                        <span
+                                                                                            class="text-gray-700 font-semibold">Total
+                                                                                            Dikembalikan:</span>
+                                                                                        <span
+                                                                                            class="font-bold text-purple-600">${{ number_format($totalReturned, 2) }}</span>
+                                                                                    </div>
+                                                                                @endif
+                                                                            @else
+                                                                                <div class="text-gray-500 italic">-
+                                                                                </div>
+                                                                            @endif
+                                                                        </div>
+
+
+                                                                        <div class="flex justify-end space-x-3 mt-6">
+                                                                            <button @click="modalOpen=false"
+                                                                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                                                                                Batal
+                                                                            </button>
+                                                                            <button wire:click="submitAdditionalAmount"
+                                                                                @click="modalOpen=false"
+                                                                                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                                                                                Verifikasi Transaksi
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </template>
+                                                    </div>
                                                 @endif
 
                                             </td>

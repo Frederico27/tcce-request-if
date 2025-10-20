@@ -6,11 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transactions extends Model
 {
-    
     protected $table = 'transactions';
     protected $primaryKey = 'id_transactions';
     protected $keyType = 'string';
-    public $incrementing = 'false'; // public
+    public $incrementing = false; // public
     public $timestamps = true; //public
 
     protected $fillable = [
@@ -20,6 +19,8 @@ class Transactions extends Model
         'activity',
         'description',
         'amount',
+        'additional_amount',
+        'additional_amount_reason',
         'remaining_amount',
         'status',
         'from_user_id',
@@ -33,5 +34,4 @@ class Transactions extends Model
     {
         return $this->belongsTo(User::class, 'from_user_id');
     }
-
 }

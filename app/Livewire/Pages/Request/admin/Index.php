@@ -21,6 +21,10 @@ class Index extends Component
     public $rejectReason = '';
     public $dateFrom;
     public $dateTo;
+    public $showAdditionalAmountModal = false;
+    public $additionalAmount = null;
+    public $additionalAmountReason = '';
+    public $selectedTransactionId = null;
 
     public function clearDateFilter()
     {
@@ -63,11 +67,61 @@ class Index extends Component
         );
     }
 
+    public function openAdditionalAmountModal($id)
+    {
+        $this->selectedTransactionId = $id;
+        $this->additionalAmount = null;
+        $this->additionalAmountReason = '';
+        $this->showAdditionalAmountModal = true;
+    }
+
+    public function closeAdditionalAmountModal()
+    {
+        $this->showAdditionalAmountModal = false;
+        $this->additionalAmount = null;
+        $this->additionalAmountReason = '';
+        $this->selectedTransactionId = null;
+    }
+
+    public function submitAdditionalAmount()
+    {
+
+        // Validate if amount is provided
+        if ($this->additionalAmount !== null && floatval($this->additionalAmount) > 0) {
+            $this->validate([
+                'additionalAmount' => 'required|numeric|min:0',
+                'additionalAmountReason' => 'required|string|max:255',
+            ]);
+        } else {
+            // Set to 0 if null or empty
+            $this->additionalAmount = 0;
+        }
+
+        $this->confirm(
+            title: 'Apakah yakin ingin memverifikasi transaksi ini?',
+            html: floatval($this->additionalAmount) > 0
+                ? 'Transaksi akan diverifikasi dengan tambahan dana $' . number_format(floatval($this->additionalAmount), 2)
+                : 'Jika iya maka danamu sudah diterima oleh requestor',
+            event: 'approveReturnTable',
+            options: [
+                'confirmButtonText' => 'Konfirmasi',
+                'cancelButtonText' => 'Batal',
+            ],
+            data: [
+                'id' => $this->selectedTransactionId,
+                'additionalAmount' => $this->additionalAmount,
+                'additionalAmountReason' => $this->additionalAmountReason
+            ]
+        );
+
+        $this->closeAdditionalAmountModal();
+    }
+
     public function verifyConfirmation($id)
     {
         $this->confirm(
             title: 'Apakah yakin ingin memverifikasi transaksi ini?',
-            html: 'Jika iya maka danamu sudah diterima oleh requestor',
+            html: 'Klik konfirmasi untuk memverifikasi transaksi',
             event: 'verifyTable',
             options: [
                 'confirmButtonText' => 'Konfirmasi',
@@ -80,6 +134,7 @@ class Index extends Component
     #[On('verifyTable')]
     public function verifyInTable(array $data)
     {
+
         $this->transaction = Transactions::where('id_transactions', $data['id'])->first();
         if (!$this->transaction) {
             flash()->error('Transaction not found.');
@@ -137,6 +192,8 @@ class Index extends Component
             return redirect()->route('transactions.index');
         }
         $this->transaction->status = 'admin_approved';
+        $this->transaction->additional_amount = $data['additionalAmount'] ?? 0;
+        $this->transaction->additional_amount_reason = $data['additionalAmountReason'] ?? null;
         // $this->transaction->approved_by = 'test'; // This should be replaced with the actual admin user ID
         $this->transaction->save();
 

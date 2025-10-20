@@ -38,14 +38,14 @@ class Index extends Component
         //send telegram notification
 
         $message = "🔔 *New Transaction Submitted*\n\n"
-        . "📋 *Transaction ID:* {$transaction->id_transactions}\n"
-        . "📦 *Action:* " . ucfirst($transaction->action) . "\n"
-        . "🎯 *Activity:* " . $transaction->activity . "\n"
-        . "💰 *Amount:* $" . number_format($transaction->amount, 2) . "\n"
-        . "📝 *Description:* " . $transaction->description . "\n"
-        . "📅 *Date:* " . $transaction->created_at->format('d/m/Y H:i') . "\n"
-        . "🔄 *Status:* Pending Review\n\n"
-        . "Please review this transaction in the admin panel.";
+            . "📋 *Transaction ID:* {$transaction->id_transactions}\n"
+            . "📦 *Action:* " . ucfirst($transaction->action) . "\n"
+            . "🎯 *Activity:* " . $transaction->activity . "\n"
+            . "💰 *Amount:* $" . number_format($transaction->amount, 2) . "\n"
+            . "📝 *Description:* " . $transaction->description . "\n"
+            . "📅 *Date:* " . $transaction->created_at->format('d/m/Y H:i') . "\n"
+            . "🔄 *Status:* Pending Review\n\n"
+            . "Please review this transaction in the admin panel.";
 
         $keyboard = [
             'inline_keyboard' => [
@@ -55,7 +55,7 @@ class Index extends Component
                 ]
             ]
         ];
-        
+
 
         app('App\Services\TelegramService')->sendMessage($message, null, $keyboard);
 
@@ -64,7 +64,7 @@ class Index extends Component
         return $this->redirect(url: route('transactions.requestor.index'), navigate: true);
     }
 
-   
+
 
 
     public function returnConfirmation($id)
@@ -95,7 +95,15 @@ class Index extends Component
         $remaining_amount = $transaction->amount - $amounDetails;
         $transaction->action = 'return';
         $transaction->status = 'pending';
+        if ($remaining_amount < 0) {
+            $remaining_amount = 0;
+        }
         $transaction->remaining_amount = $remaining_amount;
+        if ($amounDetails > $transaction->amount) {
+            $transaction->additional_amount = $amounDetails - $transaction->amount;
+        } else {
+            $transaction->additional_amount = 0;
+        }
         $transaction->save();
         flash()->success('Transaksi berhasil diajukan return.');
 

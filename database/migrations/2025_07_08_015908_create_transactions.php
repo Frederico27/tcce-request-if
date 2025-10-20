@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description', 255);
             $table->decimal('amount', 15, 2)->default(0);
             $table->decimal('remaining_amount', 15, 2)->default(0);
+            $table->decimal('additional_amount', 15, 2)->default(0);
             $table->foreignId('from_user_id')->constrained('users', 'id')
                 ->onUpdate('cascade');
             $table->foreignId('to_user_id')->constrained('users', 'id')
@@ -26,7 +27,7 @@ return new class extends Migration
             $table->json('approved_by')->nullable();
             $table->string('rejected_by', 100)->nullable();
             $table->string('rejection_reason', 255)->nullable();
-            $table->enum('status', ['draft', 'pending', 'manager_approved','admin_approved','senior_approved', 'vice_approved', 'verified', 'completed', 'rejected']);
+            $table->enum('status', ['draft', 'pending', 'manager_approved', 'admin_approved', 'senior_approved', 'vice_approved', 'verified', 'completed', 'rejected']);
             // $table->uuid('parent_transaction_id')->nullable();
             // $table->foreign('parent_transaction_id')
             //     ->references('id_transactions')->on('transactions')

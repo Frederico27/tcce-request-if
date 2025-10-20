@@ -75,19 +75,26 @@
                                         <span class="w-32 font-medium text-gray-500">Jumlah Diminta:</span>
                                         ${{ $this->transaction->amount }}
                                     </div>
+                                    @if ($this->transaction->additional_amount > 0)
+                                        <div class="flex">
+                                            <span class="w-32 font-medium text-gray-500">Jumlah Dana Tambahan:</span>
+                                            ${{ abs($this->transaction->additional_amount) }}
+                                        </div>
+                                    @else
                                     <div class="flex">
                                         <span class="w-32 font-medium text-gray-500">Dana Tersisa:</span>
                                         ${{ $this->transaction->remaining_amount }}
                                     </div>
+                                    @endif
                                     <div class="flex items-center">
                                         <span class="w-32 font-medium text-gray-500">Status:</span>
-                                        <span class="px-3 py-1 rounded-full text-sm font-medium
-                                            @if($this->transaction->status === 'pending') bg-yellow-100 text-yellow-800
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-medium
+                                            @if ($this->transaction->status === 'pending') bg-yellow-100 text-yellow-800
                                             @elseif($this->transaction->status === 'admin_approved') bg-blue-100 text-blue-800
                                             @elseif($this->transaction->status === 'rejected') bg-red-100 text-red-800
                                             @elseif($this->transaction->status === 'completed') bg-green-100 text-green-800
-                                                @else bg-gray-100 text-gray-800
-                                            @endif">
+                                                @else bg-gray-100 text-gray-800 @endif">
                                             {{ ucwords(str_replace('_', ' ', $this->transaction->status)) }}
                                         </span>
                                     </div>
@@ -146,8 +153,7 @@
                                                 <span>{{ $detail->subCategory->sub_category_name }}</span>
                                             </div>
                                         </div>
-                                        <div class="flex-shrink-0"
-                                            x-data="{ showModal: false, imageSrc: '{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}' }">
+                                        <div class="flex-shrink-0" x-data="{ showModal: false, imageSrc: '{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}' }">
                                             <img src="{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}"
                                                 alt="Bukti Pembelian"
                                                 class="w-32 h-32 object-cover cursor-pointer rounded-md shadow-sm hover:shadow-md transition"

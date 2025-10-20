@@ -77,7 +77,8 @@ class Edit extends Component
         $this->dispatch('subcategory-options-updated', index: $index); // Emit event
     }
 
-    public function deleteConfirmation($index){
+    public function deleteConfirmation($index)
+    {
         $this->confirm(
             title: 'Apakah yakin ingin menghapus item ini?',
             html: 'Klik konfirmasi untuk menghapus item',
@@ -136,11 +137,16 @@ class Edit extends Component
                 $totalamountUploaded = TransactionDetails::where('id_transactions', $detail->id_transactions)
                     ->where('id_transaction_detail', '!=', $detail->id_transaction_detail)
                     ->sum('amount');
-                $totalamountUploaded += $this->amounts[$index];
-                if ($totalamountUploaded > $amountTransaction) {
-                    flash()->error('Total amount detail melebihi jumlah transaksi.');
-                    return;
-                }
+
+                //Limit amount
+
+                // $totalamountUploaded += $this->amounts[$index];
+                // if ($totalamountUploaded > $amountTransaction) {
+                //     flash()->error('Total amount detail melebihi jumlah transaksi.');
+                //     return;
+                // }
+
+
                 // Update transaction details
                 $detail->used_for = $this->descriptions[$index];
                 $detail->amount = $this->amounts[$index];
