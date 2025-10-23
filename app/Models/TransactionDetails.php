@@ -27,6 +27,12 @@ class TransactionDetails extends Model
     {
         return $this->hasMany(TransactionAttachment::class, 'id_transaction_detail', 'id_transaction_detail');
     }
+
+    public function transactionImageActivities()
+    {
+        return $this->hasMany(TransactionImageActivity::class, 'id_transaction_detail', 'id_transaction_detail');
+    }
+
     public function subCategory()
     {
         return $this->belongsTo(SubCategories::class, 'id_sub_category', 'id_sub_category');

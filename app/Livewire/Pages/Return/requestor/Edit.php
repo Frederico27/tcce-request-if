@@ -7,6 +7,7 @@ use App\Models\Categories;
 use App\Models\SubCategories;
 use App\Models\TransactionAttachment;
 use App\Models\TransactionDetails;
+use App\Models\TransactionImageActivity;
 use DB;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -27,6 +28,8 @@ class Edit extends Component
     public $subCategories = [];
     public $subCategoryOptions = [];
     public $categoryOptions = [];
+    public $activityImages = [];
+    public $existingActivityImages = [];
 
     public function mount()
     {
@@ -49,6 +52,19 @@ class Edit extends Component
             if ($detail->transactionAttachments->count() > 0) {
                 $this->imageSrcs[$index] = asset('storage/' . $detail->transactionAttachments[0]->file_path);
             }
+
+            // Load existing activity images
+            $activityImages = TransactionImageActivity::where('id_transaction_detail', $detail->id_transaction_detail)->get();
+            $this->existingActivityImages[$index] = $activityImages->map(function ($img) {
+                return [
+                    'id' => $img->id_image_activity,
+                    'path' => asset('storage/' . $img->image_path),
+                    'description' => $img->description,
+                ];
+            })->toArray();
+
+            // Initialize activity images array
+            $this->activityImages[$index] = [];
 
             // Load subcategory options for this category
             $this->loadSubCategoryOptions($index, $detail->subCategory->category->id_category);
@@ -75,6 +91,39 @@ class Edit extends Component
         $this->subCategories[$index] = null;
         $this->loadSubCategoryOptions($index, $value);
         $this->dispatch('subcategory-options-updated', index: $index); // Emit event
+    }
+
+    public function removeActivityImage($itemIndex, $imageId)
+    {
+        try {
+            $activityImage = TransactionImageActivity::find($imageId);
+            if ($activityImage) {
+                // Delete the file from storage
+                if (\Storage::disk('public')->exists($activityImage->image_path)) {
+                    \Storage::disk('public')->delete($activityImage->image_path);
+                }
+                $activityImage->delete();
+
+                // Remove from existing images array
+                $this->existingActivityImages[$itemIndex] = array_filter(
+                    $this->existingActivityImages[$itemIndex] ?? [],
+                    fn($img) => $img['id'] !== $imageId
+                );
+                $this->existingActivityImages[$itemIndex] = array_values($this->existingActivityImages[$itemIndex]);
+
+                flash()->success('Gambar aktivitas berhasil dihapus.');
+            }
+        } catch (\Exception $e) {
+            flash()->error('Gagal menghapus gambar aktivitas: ' . $e->getMessage());
+        }
+    }
+
+    public function removeNewActivityImage($itemIndex, $imageIndex)
+    {
+        if (isset($this->activityImages[$itemIndex][$imageIndex])) {
+            unset($this->activityImages[$itemIndex][$imageIndex]);
+            $this->activityImages[$itemIndex] = array_values($this->activityImages[$itemIndex]);
+        }
     }
 
     public function deleteConfirmation($index)
@@ -173,6 +222,20 @@ class Edit extends Component
                         'file_type' => 'image',
                         'uploaded_by' => auth()->user()->full_name ?? 'System',
                     ]);
+                }
+
+                // Save new activity images if provided
+                if (isset($this->activityImages[$index]) && is_array($this->activityImages[$index])) {
+                    foreach ($this->activityImages[$index] as $activityImage) {
+                        if ($activityImage) {
+                            $activityImagePath = $activityImage->store('/activityImages', 'public');
+                            TransactionImageActivity::create([
+                                'id_transaction_detail' => $detail->id_transaction_detail,
+                                'description' => $this->descriptions[$index],
+                                'image_path' => $activityImagePath,
+                            ]);
+                        }
+                    }
                 }
             }
 

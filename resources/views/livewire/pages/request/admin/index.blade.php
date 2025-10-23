@@ -176,12 +176,44 @@
                         </div>
                     </div>
 
+                    <!-- Export Buttons -->
+                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-4" x-data="{ get selectedCount() { return $wire.selectedTransactions ? $wire.selectedTransactions.length : 0 } }">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="text-sm text-gray-700">
+                                <span x-text="selectedCount"></span> transaction(s) selected
+                            </div>
+                            <div class="flex gap-3">
+                                <button wire:click="exportExcel" 
+                                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    :disabled="selectedCount === 0">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    Export to Excel
+                                </button>
+                                <button wire:click="exportPdf" 
+                                    class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    :disabled="selectedCount === 0">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Export to PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Table Container -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
+                                        <th scope="col" class="px-6 py-3 text-left">
+                                            <input type="checkbox" 
+                                                wire:model.live="selectAll"
+                                                class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                        </th>
                                         <th scope="col"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             ID Transaksi
@@ -222,6 +254,12 @@
                                 <tbody class="bg-white divide-y divide-gray-200" id="table-body">
                                     @forelse ($transactions as $transaction)
                                         <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                <input type="checkbox" 
+                                                    wire:model.live="selectedTransactions"
+                                                    value="{{ $transaction->id_transactions }}"
+                                                    class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
 
@@ -379,94 +417,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-                                            <!-- Additional Amount Modal -->
-                                            <div x-data="{ show: @entangle('showAdditionalAmountModal') }" x-show="show" x-cloak
-                                                class="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center"
-                                                style="background-color: rgba(0, 0, 0, 0.5);">
-                                                <!-- Modal Content -->
-                                                <div
-                                                    class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full mx-4 my-8">
-                                                    <div class="flex justify-between items-center mb-4">
-                                                        <h3 class="text-lg font-medium">Verifikasi Transaksi</h3>
-                                                        <button wire:click="closeAdditionalAmountModal" type="button"
-                                                            class="text-gray-400 hover:text-gray-500">
-                                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                                                stroke="currentColor">
-                                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                                    stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
-                                                        <div class="flex">
-                                                            <div class="flex-shrink-0">
-                                                                <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20"
-                                                                    fill="currentColor">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                                                        clip-rule="evenodd"></path>
-                                                                </svg>
-                                                            </div>
-                                                            <div class="ml-3">
-                                                                <p class="text-sm text-blue-700">
-                                                                    Jika ada biaya tambahan yang diperlukan di luar
-                                                                    jumlah yang diminta, Anda dapat menambahkannya di
-                                                                    sini. Ini opsional.
-                                                                </p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="mb-4">
-                                                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                                                            Jumlah Tambahan (Opsional)
-                                                        </label>
-                                                        <div class="mt-1 relative rounded-md shadow-sm">
-                                                            <div
-                                                                class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                                                <span class="text-gray-500 sm:text-sm">$</span>
-                                                            </div>
-                                                            <input type="number" inputmode="decimal"
-                                                                wire:model.defer="additionalAmount" min="0"
-                                                                step="0.01"
-                                                                class="block w-full pl-7 pr-12 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                                                                placeholder="0.00">
-                                                        </div>
-                                                        @error('additionalAmount')
-                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="mb-4">
-                                                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                                                            Alasan Penambahan (Diperlukan jika jumlah tambahan diisi)
-                                                        </label>
-                                                        <textarea wire:model.defer="additionalAmountReason"
-                                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-700 
-                                                            bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 
-                                                            focus:ring-blue-500 focus:border-transparent resize-none 
-                                                            transition duration-200 ease-in-out"
-                                                            rows="3" placeholder="Jelaskan alasan penambahan jumlah..."></textarea>
-                                                        @error('additionalAmountReason')
-                                                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                                                        @enderror
-                                                    </div>
-
-                                                    <div class="flex justify-end space-x-3 mt-6">
-                                                        <button wire:click="closeAdditionalAmountModal"
-                                                            class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
-                                                            Batal
-                                                        </button>
-                                                        <button wire:click="submitAdditionalAmount"
-                                                            class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                                                            Verifikasi Transaksi
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-
 
                                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
 
@@ -656,13 +606,61 @@
                                                                             @endif
                                                                         </div>
 
+                                                                        @if ($transaction->additional_amount > 0 || $transaction->remaining_amount > 0)
+                                                                        <div class="mt-6 border-t border-gray-200 pt-4">
+                                                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                                                Upload Bukti Sisa atau Penambahan Dana
+                                                                                <span class="text-red-500">*</span>
+                                                                            </label>
+                                                                            <div class="mt-1">
+                                                                                <input type="file" 
+                                                                                    wire:model="imageDishRebush"
+                                                                                    accept="image/*"
+                                                                                    class="block w-full text-sm text-gray-500
+                                                                                        file:mr-4 file:py-2 file:px-4
+                                                                                        file:rounded-md file:border-0
+                                                                                        file:text-sm file:font-semibold
+                                                                                        file:bg-blue-50 file:text-blue-700
+                                                                                        hover:file:bg-blue-100
+                                                                                        cursor-pointer">
+                                                                            </div>
+                                                                            @error('imageDishRebush')
+                                                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                                                            @enderror
+                                                                            <p class="mt-1 text-xs text-gray-500">
+                                                                                Format: JPG, PNG, JPEG (Max: 2MB)
+                                                                            </p>
+                                                                            
+                                                                            @if ($imageDishRebush)
+                                                                                <div class="mt-3">
+                                                                                    <p class="text-sm text-gray-700 mb-2">Preview:</p>
+                                                                                    <img src="{{ $imageDishRebush->temporaryUrl() }}" 
+                                                                                        class="h-32 w-auto rounded-lg border border-gray-300"
+                                                                                        alt="Preview">
+                                                                                </div>
+                                                                            @endif
+
+                                                                            <div class="mt-3">
+                                                                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                                                    Deskripsi (Opsional)
+                                                                                </label>
+                                                                                <textarea wire:model="imageDishRebushDescription"
+                                                                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm text-gray-700 
+                                                                                    bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 
+                                                                                    focus:ring-indigo-500 focus:border-transparent resize-none 
+                                                                                    transition duration-200 ease-in-out"
+                                                                                    rows="3"
+                                                                                    placeholder="Masukkan deskripsi..."></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        @endif
 
                                                                         <div class="flex justify-end space-x-3 mt-6">
                                                                             <button @click="modalOpen=false"
                                                                                 class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
                                                                                 Batal
                                                                             </button>
-                                                                            <button wire:click="submitAdditionalAmount"
+                                                                            <button wire:click="submitAdditionalAmount('{{ $transaction->id_transactions }}')"
                                                                                 @click="modalOpen=false"
                                                                                 class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                                                                                 Verifikasi Transaksi
@@ -679,7 +677,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                            <td colspan="9" class="px-6 py-4 text-center text-gray-500">
                                                 Tidak ada transaksi yang tersedia.
                                             </td>
                                         </tr>

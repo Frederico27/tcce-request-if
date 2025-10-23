@@ -6,6 +6,7 @@ use App\Models\Categories;
 use App\Models\SubCategories;
 use App\Models\TransactionAttachment;
 use App\Models\TransactionDetails;
+use App\Models\TransactionImageActivity;
 use App\Models\Transactions;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
@@ -39,6 +40,7 @@ class Create extends Component
                 'category' => null,
                 'id_sub_category' => null,
                 'filteredSubCategories' => [],
+                'activity_images' => [], // optional activity images
             ]
         ];
     }
@@ -124,6 +126,7 @@ class Create extends Component
             'category' => null,
             'id_sub_category' => null,
             'filteredSubCategories' => [],
+            'activity_images' => [], // optional activity images
         ];
     }
 
@@ -134,6 +137,14 @@ class Create extends Component
             // Livewire handles temp uploads; unset is enough
             unset($this->items[$index]);
             $this->items = array_values($this->items);
+        }
+    }
+
+    public function removeActivityImage($itemIndex, $imageIndex)
+    {
+        if (isset($this->items[$itemIndex]['activity_images'][$imageIndex])) {
+            unset($this->items[$itemIndex]['activity_images'][$imageIndex]);
+            $this->items[$itemIndex]['activity_images'] = array_values($this->items[$itemIndex]['activity_images']);
         }
     }
 
@@ -148,6 +159,7 @@ class Create extends Component
                 'items.*.amount' => 'required|numeric|min:0',
                 'items.*.id_sub_category' => 'required|exists:sub_categories,id_sub_category',
                 'items.*.image' => 'required|image|max:2048',
+                'items.*.activity_images.*' => 'nullable|image|max:2048', // optional activity images
             ]);
 
 
@@ -183,6 +195,20 @@ class Create extends Component
                         'file_type' => 'image',
                         'uploaded_by' => 'Riko',
                     ]);
+                }
+
+                // Save activity images if provided
+                if (isset($item['activity_images']) && is_array($item['activity_images'])) {
+                    foreach ($item['activity_images'] as $activityImage) {
+                        if ($activityImage) {
+                            $activityImagePath = $activityImage->store('/activityImages', 'public');
+                            TransactionImageActivity::create([
+                                'id_transaction_detail' => $detailTransaction->id_transaction_detail,
+                                'description' => $item['description'],
+                                'image_path' => $activityImagePath,
+                            ]);
+                        }
+                    }
                 }
             }
 

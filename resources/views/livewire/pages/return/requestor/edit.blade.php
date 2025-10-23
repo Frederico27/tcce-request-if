@@ -140,6 +140,108 @@
                                                     @error("descriptions.{$index}")
                                                         <span class="text-red-500 text-xs block">{{ $message }}</span>
                                                     @enderror
+
+                                                    <!-- Activity Images Upload (Optional) -->
+                                                    <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md" x-data="{ 
+                                                        showActivityModal: false, 
+                                                        activityModalImage: ''
+                                                    }">
+                                                        <div class="flex items-center justify-between mb-3">
+                                                            <label class="block text-sm font-medium text-gray-700">
+                                                                <svg class="inline-block w-5 h-5 mr-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                                </svg>
+                                                                Gambar Aktivitas
+                                                                <span class="text-xs text-gray-500 font-normal">(Opsional)</span>
+                                                            </label>
+                                                            <span class="text-xs text-gray-600 italic">Upload multiple images if needed</span>
+                                                        </div>
+
+                                                        <!-- Existing Activity Images -->
+                                                        @if(isset($existingActivityImages[$index]) && count($existingActivityImages[$index]) > 0)
+                                                            <div class="mb-4">
+                                                                <p class="text-xs text-gray-600 mb-2 font-medium">Gambar yang sudah ada:</p>
+                                                                <div class="grid grid-cols-3 gap-2">
+                                                                    @foreach($existingActivityImages[$index] as $existingImg)
+                                                                        <div class="relative group">
+                                                                            <img src="{{ $existingImg['path'] }}"
+                                                                                class="object-cover w-full h-20 rounded-md border border-gray-300 cursor-pointer hover:opacity-90 transition"
+                                                                                @click="activityModalImage = '{{ $existingImg['path'] }}'; showActivityModal = true" />
+                                                                            <button type="button"
+                                                                                class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-red-600"
+                                                                                wire:click="removeActivityImage({{ $index }}, {{ $existingImg['id'] }})">
+                                                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        
+                                                        <!-- Multiple Image Upload -->
+                                                        <div class="space-y-3">
+                                                            <input type="file" 
+                                                                wire:model.live="activityImages.{{ $index }}" 
+                                                                id="activity-images-{{ $index }}" 
+                                                                class="block w-full text-sm text-gray-500
+                                                                    file:mr-4 file:py-2 file:px-4
+                                                                    file:rounded-md file:border-0
+                                                                    file:text-sm file:font-semibold
+                                                                    file:bg-blue-100 file:text-blue-700
+                                                                    hover:file:bg-blue-200
+                                                                    cursor-pointer transition duration-150"
+                                                                accept="image/*" multiple>
+                                                            
+                                                            <!-- Preview New Activity Images -->
+                                                            @if(isset($activityImages[$index]) && is_array($activityImages[$index]) && count($activityImages[$index]) > 0)
+                                                                <div class="mt-3">
+                                                                    <p class="text-xs text-gray-600 mb-2 font-medium">Gambar baru yang akan ditambahkan:</p>
+                                                                    <div class="grid grid-cols-3 gap-2">
+                                                                        @foreach($activityImages[$index] as $actIndex => $actImage)
+                                                                            @if($actImage && is_object($actImage) && method_exists($actImage, 'temporaryUrl'))
+                                                                                <div class="relative group">
+                                                                                    <img src="{{ $actImage->temporaryUrl() }}"
+                                                                                        class="object-cover w-full h-20 rounded-md border border-gray-300 cursor-pointer hover:opacity-90 transition"
+                                                                                        @click="activityModalImage = '{{ $actImage->temporaryUrl() }}'; showActivityModal = true" />
+                                                                                    <button type="button"
+                                                                                        class="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition duration-200 hover:bg-red-600"
+                                                                                        wire:click="removeNewActivityImage({{ $index }}, {{ $actIndex }})">
+                                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                </div>
+                                                                            @endif
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+
+                                                            <!-- Activity Image Modal -->
+                                                            <div x-show="showActivityModal" x-transition
+                                                                class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+                                                                @click.away="showActivityModal = false">
+                                                                <div class="bg-white rounded-lg overflow-hidden max-w-3xl max-h-[90vh] p-4 relative">
+                                                                    <button @click.prevent.stop="showActivityModal = false"
+                                                                        class="absolute top-2 right-2 text-black text-2xl hover:text-gray-700">&times;</button>
+                                                                    <img :src="activityModalImage" class="max-w-full max-h-[80vh] rounded-md" />
+                                                                </div>
+                                                            </div>
+
+                                                            @error("activityImages.{$index}.*")
+                                                                <span class="text-red-500 text-xs block mt-1">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
+                                                        
+                                                        <p class="text-xs text-gray-600 mt-2">
+                                                            <svg class="inline-block w-4 h-4 mr-1 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                            </svg>
+                                                            Tambahkan foto aktivitas untuk dokumentasi tambahan (opsional)
+                                                        </p>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Right Column -->
