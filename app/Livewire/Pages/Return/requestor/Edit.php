@@ -24,6 +24,7 @@ class Edit extends Component
     public $imageSrcs = [];
     public $descriptions = [];
     public $amounts = [];
+    public $invoice_dates = [];
     public $categories = [];
     public $subCategories = [];
     public $subCategoryOptions = [];
@@ -44,8 +45,10 @@ class Edit extends Component
             ->get();
 
         foreach ($this->transactionDetails as $index => $detail) {
+
             $this->descriptions[$index] = $detail->used_for;
             $this->amounts[$index] = $detail->amount;
+            $this->invoice_dates[$index] = $detail->invoice_date;
             $this->categories[$index] = $detail->subCategory->category->id_category;
             $this->subCategories[$index] = $detail->id_sub_category;
 
@@ -175,17 +178,23 @@ class Edit extends Component
     public function save()
     {
         try {
+            // Validate the data
+            $this->validate([
+                'descriptions.*' => 'required|string|max:255',
+                'amounts.*' => 'required|numeric|min:0',
+                'invoice_dates.*' => 'required|date',
+                'subCategories.*' => 'required|exists:sub_categories,id_sub_category',
+            ]);
+
             DB::beginTransaction();
-
-
 
             foreach ($this->transactionDetails as $index => $detail) {
 
                 //checktotal amount with amount transaction
-                $amountTransaction = $detail->transaction->amount;
-                $totalamountUploaded = TransactionDetails::where('id_transactions', $detail->id_transactions)
-                    ->where('id_transaction_detail', '!=', $detail->id_transaction_detail)
-                    ->sum('amount');
+                // $amountTransaction = $detail->transaction->amount;
+                // $totalamountUploaded = TransactionDetails::where('id_transactions', $detail->id_transactions)
+                //     ->where('id_transaction_detail', '!=', $detail->id_transaction_detail)
+                //     ->sum('amount');
 
                 //Limit amount
 
@@ -199,6 +208,7 @@ class Edit extends Component
                 // Update transaction details
                 $detail->used_for = $this->descriptions[$index];
                 $detail->amount = $this->amounts[$index];
+                $detail->invoice_date = $this->invoice_dates[$index];
                 $detail->id_sub_category = $this->subCategories[$index];
                 $detail->save();
 

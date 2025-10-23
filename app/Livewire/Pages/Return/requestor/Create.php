@@ -23,6 +23,7 @@ class Create extends Component
     public $id_sub_category;
     public $image;
     public $amount;
+    public $invoice_date;
     public $description;
     public $filteredSubCategories = [];
     public $items = []; // dynamic items for multiple returns
@@ -37,6 +38,7 @@ class Create extends Component
                 'image' => null,
                 'description' => '',
                 'amount' => null,
+                'invoice_date' => null,
                 'category' => null,
                 'id_sub_category' => null,
                 'filteredSubCategories' => [],
@@ -123,6 +125,7 @@ class Create extends Component
             'image' => null,
             'description' => '',
             'amount' => null,
+            'invoice_date' => null,
             'category' => null,
             'id_sub_category' => null,
             'filteredSubCategories' => [],
@@ -157,6 +160,7 @@ class Create extends Component
                 'items' => 'required|array|min:1',
                 'items.*.description' => 'required|string|max:255',
                 'items.*.amount' => 'required|numeric|min:0',
+                'items.*.invoice_date' => 'required|date',
                 'items.*.id_sub_category' => 'required|exists:sub_categories,id_sub_category',
                 'items.*.image' => 'required|image|max:2048',
                 'items.*.activity_images.*' => 'nullable|image|max:2048', // optional activity images
@@ -184,6 +188,7 @@ class Create extends Component
                     'id_transactions' => $this->id,
                     'used_for' => $item['description'],
                     'amount' => $item['amount'],
+                    'invoice_date' => $item['invoice_date'],
                     'id_sub_category' => $item['id_sub_category'],
                 ]);
 

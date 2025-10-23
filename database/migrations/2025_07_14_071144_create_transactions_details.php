@@ -18,6 +18,7 @@ return new class extends Migration
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->decimal('amount', 15, 2)->default(0);
             $table->string('used_for', 255);
+            $table->date('invoice_date');
             $table->unsignedBigInteger('id_sub_category');
             $table->foreign('id_sub_category')->references('id_sub_category')->on('sub_categories')
                 ->onUpdate('cascade');

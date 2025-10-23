@@ -44,7 +44,7 @@
                                     @foreach($items as $index => $item)
                                         <div class="border border-gray-200 rounded-md p-4 bg-gray-50 relative">
                                             <div class="flex justify-between items-center mb-4">
-                                                <h4 class="font-medium text-gray-700">Item #{{ $index + 1 }}</h4>
+                                                <h4 class="font-bold text-gray-700">Nota Invoice #{{ $index + 1 }}</h4>
                                                 @if(count($items) > 1)
                                                     <button type="button" wire:click="removeItem({{ $index }})"
                                                         class="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150">
@@ -131,6 +131,18 @@
                                                         resize-none" 
                                                         placeholder="Enter item description"></textarea>
                                                     @error("items.{$index}.description")
+                                                        <span class="text-red-500 text-xs block">{{ $message }}</span>
+                                                    @enderror
+
+                                                    <!-- Invoice Date Input -->
+                                                    <div class="space-y-2">
+                                                        <label for="invoice-date-{{ $index }}"
+                                                            class="block text-sm font-medium text-gray-700">Tanggal Invoice</label>
+                                                        <input type="date" wire:model="items.{{ $index }}.invoice_date"
+                                                            id="invoice-date-{{ $index }}"
+                                                            class="block w-full py-3 px-4 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-blue-300 transition duration-200 ease-in-out">
+                                                    </div>
+                                                    @error("items.{$index}.invoice_date")
                                                         <span class="text-red-500 text-xs block">{{ $message }}</span>
                                                     @enderror
 

@@ -45,7 +45,7 @@
                                             @foreach($transactionDetails as $index => $dataItem)
                                             <div class="border-b border-gray-200 pb-6 mb-6 last:border-0">
                                                 <div class="flex justify-between items-center mb-3">
-                                                    <h3 class="text-lg font-medium text-gray-900">Item {{ $index + 1 }}</h3>
+                                                    <h3 class="text-lg font-bold text-gray-900">Nota Invoice #{{ $index + 1 }}</h3>
                                                     <button type="button" wire:click="deleteConfirmation({{ $index }})"
                                                         class="text-red-600 hover:text-red-800 transition duration-150"
                                         >
@@ -140,6 +140,20 @@
                                                     @error("descriptions.{$index}")
                                                         <span class="text-red-500 text-xs block">{{ $message }}</span>
                                                     @enderror
+
+                                                <!-- Invoice Date Input -->
+                                                <div class="space-y-2">
+                                                    <label for="invoice-date-{{ $index }}"
+                                                        class="block text-sm font-medium text-gray-700">Tanggal
+                                                        Invoice</label>
+                                                    <input type="date" wire:model="invoice_dates.{{ $index }}"
+                                                        id="invoice-date-{{ $index }}"
+                                                        class="block w-full px-4 py-3 sm:text-sm border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-blue-300 transition duration-200 ease-in-out"
+                                                        value="{{ $dataItem->invoice_date ?? '' }}">  
+                                                    @error("invoice_dates.{$index}")
+                                                        <span class="text-red-500 text-xs block">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
 
                                                     <!-- Activity Images Upload (Optional) -->
                                                     <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md" x-data="{ 

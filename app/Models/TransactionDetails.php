@@ -14,6 +14,7 @@ class TransactionDetails extends Model
         'id_transactions',
         'used_for',
         'amount',
+        'invoice_date',
         'id_sub_category',
     ];
     public $timestamps = true;
