@@ -8,11 +8,31 @@ use App\Models\Transactions;
 use Illuminate\Support\Facades\Http;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
-
+    use WithPagination;
     use Confirm;
+
+    public $search;
+    public $typeFilter;
+    public $statusFilter;
+
+    // Sorting and pagination properties
+    public $perPage = 10;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
 
     public function submitConfirmation($id)
     {
@@ -130,7 +150,10 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        $transaction = $query->paginate(10);
+        // Apply sorting
+        $query->orderBy($this->sortField, $this->sortDirection);
+
+        $transaction = $query->paginate($this->perPage);
 
         return view('livewire.pages.return.requestor.index', [
             'transactions' => $transaction

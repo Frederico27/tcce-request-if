@@ -170,6 +170,17 @@
                                             <option value="completed">Completed</option>
                                         </select>
                                     </div>
+
+                                    <!-- Sub Unit Filter -->
+                                    <div class="relative">
+                                        <select wire:model.live.debounce.300ms="subUnitFilter" id="subunit-filter"
+                                            class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md bg-white">
+                                            <option value="">Semua Sub Unit</option>
+                                            @foreach($subUnits as $subUnit)
+                                                <option value="{{ $subUnit->id_sub_unit }}">{{ $subUnit->nama_sub_unit }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
                             </div>
@@ -205,6 +216,24 @@
 
                     <!-- Table Container -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Rows Per Page Filter -->
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <label for="perPage" class="text-sm text-gray-700">Show</label>
+                                    <select wire:model.live="perPage" id="perPage"
+                                        class="block w-20 pl-3 pr-8 py-1.5 text-sm border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md bg-white">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="{{ $transactions->total() }}">All</option>
+                                    </select>
+                                    <span class="text-sm text-gray-700">entries</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
@@ -214,36 +243,136 @@
                                                 wire:model.live="selectAll"
                                                 class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50">
                                         </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            ID Transaksi
+                                        <th scope="col" wire:click="sortBy('id_transactions')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                ID Transaksi
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'id_transactions' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'id_transactions' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Aksi Transaksi
+                                        <th scope="col" wire:click="sortBy('action')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Aksi Transaksi
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'action' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'action' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Deskripsi
+                                        <th scope="col" wire:click="sortBy('description')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Deskripsi
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'description' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'description' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Nominal
+                                        <th scope="col" wire:click="sortBy('amount')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Nominal Request
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'amount' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'amount' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
 
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Di Request oleh
+                                        <th scope="col" wire:click="sortBy('additional_amount')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Dana Tambahan
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'additional_amount' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'additional_amount' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
 
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Tanggal
+                                        <th scope="col" wire:click="sortBy('remaining_amount')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Sisa Dana
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'remaining_amount' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'remaining_amount' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
 
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Status
+                                        <th scope="col" wire:click="sortBy('requested_by')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Di Request oleh
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'requested_by' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'requested_by' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </th>
+
+                                        <th scope="col" wire:click="sortBy('created_at')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Tanggal
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'created_at' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'created_at' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </th>
+
+                                        <th scope="col" wire:click="sortBy('status')"
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                            <div class="flex items-center gap-2">
+                                                Status
+                                                <span class="flex flex-col">
+                                                    <svg class="w-3 h-3 {{ $sortField === 'status' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                    </svg>
+                                                    <svg class="w-3 h-3 -mt-1 {{ $sortField === 'status' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                    </svg>
+                                                </span>
+                                            </div>
                                         </th>
 
                                         <th scope="col" class="relative px-6 py-3">
@@ -307,6 +436,26 @@
                                                 </div>
                                             </td>
 
+                                            
+                                             <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            ${{ $transaction->additional_amount }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                             <td class="px-6 py-4 whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <div class="ml-4">
+                                                        <div class="text-sm font-medium text-gray-900">
+                                                            ${{ $transaction->remaining_amount }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
 
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">

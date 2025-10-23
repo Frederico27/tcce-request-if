@@ -25,6 +25,7 @@ class Index extends Component
     public $search;
     public $typeFilter;
     public $statusFilter;
+    public $subUnitFilter;
     public $transaction;
     public $showRejectModal = false;
     public $rejectReason = '';
@@ -39,6 +40,21 @@ class Index extends Component
     public $imageDishRebush = null;
     public $imageDishRebushDescription = '';
     public $storedImagePath = null;
+
+    // Sorting and pagination properties
+    public $perPage = 10;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
 
     public function updatedSelectAll($value)
     {
@@ -56,6 +72,11 @@ class Index extends Component
                 })
                 ->when($this->typeFilter, fn($query) => $query->where('action', $this->typeFilter))
                 ->when($this->statusFilter, fn($query) => $query->where('status', $this->statusFilter))
+                ->when($this->subUnitFilter, function ($query) {
+                    $query->whereHas('fromUser.subUnit', function ($q) {
+                        $q->where('id_sub_unit', $this->subUnitFilter);
+                    });
+                })
                 ->when($this->dateFrom, fn($query) => $query->whereDate('created_at', '>=', $this->dateFrom))
                 ->when($this->dateTo, fn($query) => $query->whereDate('created_at', '<=', $this->dateTo))
                 ->pluck('id_transactions')
@@ -388,6 +409,12 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
+        if (!empty($this->subUnitFilter)) {
+            $query->whereHas('fromUser.subUnit', function ($q) {
+                $q->where('id_sub_unit', $this->subUnitFilter);
+            });
+        }
+
         if ($this->dateFrom) {
             $query->whereDate('created_at', '>=', $this->dateFrom);
         }
@@ -396,12 +423,17 @@ class Index extends Component
             $query->whereDate('created_at', '<=', $this->dateTo);
         }
 
-        $transaction = $query->paginate(5);
+        // Apply sorting
+        $query->orderBy($this->sortField, $this->sortDirection);
+
+        $transaction = $query->paginate($this->perPage);
         $saldo = Saldo::findOrFail(1);
+        $subUnits = \App\Models\SubUnit::all();
 
         return view('livewire.pages.request.admin.index', [
             'transactions' => $transaction,
-            'saldo' => $saldo
+            'saldo' => $saldo,
+            'subUnits' => $subUnits
         ]);
     }
 }

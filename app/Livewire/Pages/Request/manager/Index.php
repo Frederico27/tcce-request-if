@@ -19,7 +19,23 @@ class Index extends Component
     public $showRejectModal = false;
     public $rejectReason = '';
 
-    public function approveConfirmation($id){
+    // Sorting and pagination properties
+    public $perPage = 10;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
+
+    public function approveConfirmation($id)
+    {
         $this->confirm(
             title: 'Apakah yakin ingin menyetujui request ini?',
             html: 'Klik konfirmasi untuk menyetujui request',
@@ -33,20 +49,21 @@ class Index extends Component
     }
 
     #[On('approveTable')]
-    public function approveTable(array $data){
+    public function approveTable(array $data)
+    {
 
         $this->transaction = Transactions::where('id_transactions', $data['id'])->first();
 
-        if(!$this->transaction){
+        if (!$this->transaction) {
             session()->flash('error', 'Transaction not found.');
-            return $this->redirect(route('transactions.manager.index')) ;
+            return $this->redirect(route('transactions.manager.index'));
         }
-        if($this->transaction->action !== 'request'){
+        if ($this->transaction->action !== 'request') {
             session()->flash('error', 'Transaction is not in requested status.');
             return $this->redirect(route('transactions.manager.index'));
         }
         $this->transaction->status = 'manager_approved';
-        $this->transaction->approved_by =['Riko']; // This should be replaced with the actual admin user ID
+        $this->transaction->approved_by = ['Riko']; // This should be replaced with the actual admin user ID
         $this->transaction->save();
         session()->flash('success', 'Transaction approved successfully.');
     }
@@ -84,10 +101,11 @@ class Index extends Component
         flash()->success('Return transaction approved successfully.');
     }
 
-    public function rejectConfirmation($id){
-         
+    public function rejectConfirmation($id)
+    {
+
         // Validate the rejected
-         $this->validate([
+        $this->validate([
             'rejectReason' => 'required|string|max:255',
         ]);
 
@@ -106,13 +124,13 @@ class Index extends Component
     #[On('rejectTable')]
     public function rejectedInTable(array $data)
     {
-    
+
         $this->transaction = Transactions::where('id_transactions', $data['id'])->first();
         if (!$this->transaction) {
             session()->flash('error', 'Transaction not found.');
             return redirect()->route('transactions.index');
         }
-       
+
         $this->transaction->status = 'rejected';
         $this->transaction->rejection_reason = $this->rejectReason;
         $this->transaction->save();
@@ -135,7 +153,7 @@ class Index extends Component
                 ->orWhere('amount', 'like', '%' . $this->search . '%')
                 ->orWhere('id_transactions', 'like', '%' . $this->search . '%');
         }
-        
+
         // Filter by type
         if (!empty($this->typeFilter)) {
             $query->where('action', $this->typeFilter);
@@ -145,7 +163,10 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        $transaction = $query->paginate(10);
+        // Apply sorting
+        $query->orderBy($this->sortField, $this->sortDirection);
+
+        $transaction = $query->paginate($this->perPage);
 
 
         return view('livewire.pages.request.manager.index', [

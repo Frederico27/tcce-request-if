@@ -8,14 +8,31 @@ use App\Models\Transactions;
 use App\Models\User;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination;
     use Confirm;
     public $search;
     public $typeFilter;
     public $statusFilter;
     public $transaction;
+
+    // Sorting and pagination properties
+    public $perPage = 10;
+    public $sortField = 'created_at';
+    public $sortDirection = 'desc';
+
+    public function sortBy($field)
+    {
+        if ($this->sortField === $field) {
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortField = $field;
+            $this->sortDirection = 'asc';
+        }
+    }
 
     public function approveConfirmation($id)
     {
@@ -36,11 +53,11 @@ class Index extends Component
     {
 
         $transaction = Transactions::findOrFail($data['id']);
-        if($transaction->remaining_amount >= 0) {
+        if ($transaction->remaining_amount >= 0) {
             //Top up the remaining to admin 
             Saldo::where('id_user', operator: User::role('admin')->first()->id)
                 ->increment('balance', $transaction->remaining_amount);
-        }else{
+        } else {
             flash()->error('Transaksi tidak dapat diselesaikan karena sisa jumlah kurang dari 0.');
         }
         $transaction->status = 'completed';
@@ -50,7 +67,7 @@ class Index extends Component
         return $this->redirect(url: route('transactions.finance.index'), navigate: true);
     }
 
-   
+
     public function render()
     {
         $query = Transactions::query()->where('status', '!=', 'draft');
@@ -71,7 +88,10 @@ class Index extends Component
             $query->where('status', $this->statusFilter);
         }
 
-        $transaction = $query->paginate(10);
+        // Apply sorting
+        $query->orderBy($this->sortField, $this->sortDirection);
+
+        $transaction = $query->paginate($this->perPage);
 
         return view('livewire.pages.return.finance.index', [
             'transactions' => $transaction

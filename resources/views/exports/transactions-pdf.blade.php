@@ -261,6 +261,60 @@
         </div>
     @endforeach
 
+    @php
+        $totalAmountRequested = collect($transactions)->sum('amount');
+        $totalAdditionalAmount = collect($transactions)->sum('additional_amount');
+        $totalRemainingAmount = collect($transactions)->sum('remaining_amount');
+        $totalDetailsAmount = collect($transactions)->sum('details_amount');
+        $grandTotal = $totalAmountRequested + $totalAdditionalAmount;
+    @endphp
+
+    <div class="transaction-card" style="background-color: #F9FAFB; border: 2px solid #4B5563;">
+        <div class="transaction-header" style="background-color: #374151;">
+            Summary - Total Amounts
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Total Amount Requested:</div>
+                <div class="info-value" style="font-weight: bold; color: #1F2937;">
+                    ${{ number_format($totalAmountRequested, 2) }}
+                </div>
+            </div>
+            @if ($totalDetailsAmount > 0)
+                <div class="info-row">
+                    <div class="info-label">Total Amount Returned:</div>
+                    <div class="info-value" style="font-weight: bold; color: #059669;">
+                        ${{ number_format($totalDetailsAmount, 2) }}
+                    </div>
+                </div>
+            @endif
+            @if ($totalAdditionalAmount > 0)
+                <div class="info-row">
+                    <div class="info-label">Total Additional Amount:</div>
+                    <div class="info-value" style="font-weight: bold; color: #DC2626;">
+                        ${{ number_format($totalAdditionalAmount, 2) }}
+                    </div>
+                </div>
+            @endif
+            @if ($totalRemainingAmount > 0)
+                <div class="info-row">
+                    <div class="info-label">Total Remaining Amount:</div>
+                    <div class="info-value" style="font-weight: bold; color: #2563EB;">
+                        ${{ number_format($totalRemainingAmount, 2) }}
+                    </div>
+                </div>
+            @endif
+            <div class="divider"></div>
+            <div class="info-row">
+                <div class="info-label" style="font-size: 14px;">Grand Total:</div>
+                <div class="info-value" style="font-weight: bold; font-size: 16px; color: #111827;">
+                    ${{ number_format($grandTotal, 2) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="footer">
         <p>This is an automatically generated document.</p>
         <p>© {{ date('Y') }} Telkomcel IF Fund Management Systems. All rights reserved.</p>

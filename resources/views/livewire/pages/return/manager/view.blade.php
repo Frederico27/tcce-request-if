@@ -75,19 +75,28 @@
                                         <span class="w-32 font-medium text-gray-500">Jumlah Diminta:</span>
                                         ${{ $this->transaction->amount }}
                                     </div>
-                                    <div class="flex">
-                                        <span class="w-32 font-medium text-gray-500">Dana Tersisa:</span>
-                                        ${{ $this->transaction->remaining_amount }}
-                                    </div>
+
+                                    @if ($this->transaction->additional_amount > 0)
+                                        <div class="flex">
+                                            <span class="w-32 font-medium text-gray-500">Dana Tambahan:</span>
+                                            ${{ abs($this->transaction->additional_amount) }}
+                                        </div>
+                                    @else
+                                        <div class="flex">
+                                            <span class="w-32 font-medium text-gray-500">Dana Tersisa:</span>
+                                            ${{ $this->transaction->remaining_amount }}
+                                        </div>
+                                    @endif
+
                                     <div class="flex items-center">
                                         <span class="w-32 font-medium text-gray-500">Status:</span>
-                                        <span class="px-3 py-1 rounded-full text-sm font-medium
-                                            @if($this->transaction->status === 'pending') bg-yellow-100 text-yellow-800
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-medium
+                                            @if ($this->transaction->status === 'pending') bg-yellow-100 text-yellow-800
                                             @elseif($this->transaction->status === 'manager_approved') bg-blue-100 text-blue-800
                                             @elseif($this->transaction->status === 'rejected') bg-red-100 text-red-800
                                             @elseif($this->transaction->status === 'completed') bg-green-100 text-green-800
-                                                @else bg-gray-100 text-gray-800
-                                            @endif">
+                                                @else bg-gray-100 text-gray-800 @endif">
                                             {{ ucwords(str_replace('_', ' ', $this->transaction->status)) }}
                                         </span>
                                     </div>
@@ -96,6 +105,14 @@
                                         {{ $this->transaction->updated_at->format('d M Y H:i') }}
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Activity -->
+                        <div class="mt-6">
+                            <h3 class="text-lg font-medium text-gray-700 mb-3">Activity</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-gray-700">{{ $this->transaction->activity }}</p>
                             </div>
                         </div>
 
@@ -146,8 +163,7 @@
                                                 <span>{{ $detail->subCategory->sub_category_name }}</span>
                                             </div>
                                         </div>
-                                        <div class="flex-shrink-0"
-                                            x-data="{ showModal: false, imageSrc: '{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}' }">
+                                        <div class="flex-shrink-0" x-data="{ showModal: false, imageSrc: '{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}' }">
                                             <img src="{{ asset('storage/' . $detail->transactionAttachments[0]->file_path) }}"
                                                 alt="Bukti Pembelian"
                                                 class="w-32 h-32 object-cover cursor-pointer rounded-md shadow-sm hover:shadow-md transition"
@@ -166,6 +182,73 @@
                                     </div>
                                 </div>
                             @endforeach
+
+                            <!-- Activity Images Section -->
+                            @if (!empty($activityImages) && count($activityImages) > 0)
+                                <div class="mt-8">
+                                    <div class="flex items-center justify-between mb-6">
+                                        <h3 class="text-lg font-medium text-gray-700">Gambar Aktivitas</h3>
+                                        <span class="text-sm text-gray-500">
+                                            {{ count($activityImages) }} gambar
+                                        </span>
+                                    </div>
+
+                                    @if (!empty($activityImages) && count($activityImages) > 0)
+                                        <div
+                                            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                            @foreach ($activityImages as $index => $image)
+                                                <div class="group relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-200"
+                                                    x-data="{ showModal: false, imageSrc: '{{ asset('storage/' . $image->image_path) }}' }">
+                                                    <!-- Thumbnail -->
+                                                    <div class="relative overflow-hidden bg-gray-100">
+                                                        <img src="{{ asset('storage/' . $image->image_path) }}"
+                                                            alt="{{ $image->description ?? 'Gambar aktivitas' }}"
+                                                            class="w-full h-32 object-cover transition-transform duration-200 group-hover:scale-105 cursor-pointer"
+                                                            @click="showModal = true" loading="lazy">
+                                                    </div>
+
+                                                    <!-- Info -->
+                                                    <div class="p-2">
+                                                        <p class="text-xs text-gray-500 truncate leading-tight">
+                                                            {{ $image->description ?? 'Gambar ' . ($index + 1) }}
+                                                        </p>
+                                                    </div>
+
+                                                    <!-- Image Modal -->
+                                                    <div x-show="showModal" x-transition
+                                                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+                                                        @click="showModal = false">
+                                                        <div class="max-w-3xl max-h-[90vh] p-2 bg-white rounded-lg"
+                                                            @click.stop>
+                                                            <img :src="imageSrc" alt="Preview"
+                                                                class="max-w-full max-h-[85vh] object-contain">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <!-- Empty State -->
+                                        <div
+                                            class="bg-white border-2 border-dashed border-gray-200 rounded-lg p-8 text-center">
+                                            <div class="w-16 h-16 mx-auto mb-4">
+                                                <svg class="w-full h-full text-gray-300" fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="1"
+                                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-4a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                                                </svg>
+                                            </div>
+                                            <h4 class="text-sm font-medium text-gray-900 mb-1">Belum ada gambar
+                                                aktivitas
+                                            </h4>
+                                            <p class="text-sm text-gray-500">Gambar akan ditampilkan setelah diunggah
+                                            </p>
+                                        </div>
+                                    @endif
+                                </div>
+                            @endif
+
 
                             <!-- Total Amount Section -->
                             <div class="mt-4 bg-gray-100 p-4 rounded-lg border-t-2 border-gray-300">

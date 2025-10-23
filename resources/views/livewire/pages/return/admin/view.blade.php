@@ -103,6 +103,14 @@
                             </div>
                         </div>
 
+                          <!-- Activity -->
+                         <div class="mt-6">
+                            <h3 class="text-lg font-medium text-gray-700 mb-3">Activity</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <p class="text-gray-700">{{ $this->transaction->activity }}</p>
+                            </div>
+                        </div>
+
                         <!-- Description -->
                         <div class="mt-6">
                             <h3 class="text-lg font-medium text-gray-700 mb-3">Deskripsi</h3>

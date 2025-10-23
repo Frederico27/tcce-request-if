@@ -75,23 +75,71 @@
 
                     <!-- Table Container -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Rows Per Page Filter -->
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <label for="perPage" class="text-sm text-gray-700">Show</label>
+                                    <select wire:model.live="perPage" id="perPage"
+                                        class="block w-20 pl-3 pr-8 py-1.5 text-sm border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md bg-white">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="{{ $users->total() }}">All</option>
+                                    </select>
+                                    <span class="text-sm text-gray-700">entries</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <!-- Table Header (visible on larger screens) -->
                         <div class="hidden sm:block">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Nama Pengguna
+                                            <th scope="col" wire:click="sortBy('full_name')"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                                <div class="flex items-center gap-2">
+                                                    Nama Pengguna
+                                                    <span class="flex flex-col">
+                                                        <svg class="w-3 h-3 {{ $sortField === 'full_name' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                        </svg>
+                                                        <svg class="w-3 h-3 -mt-1 {{ $sortField === 'full_name' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                NIK
+                                            <th scope="col" wire:click="sortBy('nik')"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                                <div class="flex items-center gap-2">
+                                                    NIK
+                                                    <span class="flex flex-col">
+                                                        <svg class="w-3 h-3 {{ $sortField === 'nik' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                        </svg>
+                                                        <svg class="w-3 h-3 -mt-1 {{ $sortField === 'nik' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Posisi
+                                            <th scope="col" wire:click="sortBy('position')"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                                <div class="flex items-center gap-2">
+                                                    Posisi
+                                                    <span class="flex flex-col">
+                                                        <svg class="w-3 h-3 {{ $sortField === 'position' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                        </svg>
+                                                        <svg class="w-3 h-3 -mt-1 {{ $sortField === 'position' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </th>
                                             <th scope="col"
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -101,13 +149,33 @@
                                                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Role
                                             </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                No. Telepon
+                                            <th scope="col" wire:click="sortBy('phone_number')"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                                <div class="flex items-center gap-2">
+                                                    No. Telepon
+                                                    <span class="flex flex-col">
+                                                        <svg class="w-3 h-3 {{ $sortField === 'phone_number' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                        </svg>
+                                                        <svg class="w-3 h-3 -mt-1 {{ $sortField === 'phone_number' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </th>
-                                            <th scope="col"
-                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Status
+                                            <th scope="col" wire:click="sortBy('status')"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none">
+                                                <div class="flex items-center gap-2">
+                                                    Status
+                                                    <span class="flex flex-col">
+                                                        <svg class="w-3 h-3 {{ $sortField === 'status' && $sortDirection === 'asc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd" transform="rotate(180 10 10)"></path>
+                                                        </svg>
+                                                        <svg class="w-3 h-3 -mt-1 {{ $sortField === 'status' && $sortDirection === 'desc' ? 'text-blue-600' : 'text-gray-400' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path>
+                                                        </svg>
+                                                    </span>
+                                                </div>
                                             </th>
                                             <th scope="col" class="relative px-6 py-3">
                                                 <span class="sr-only">Actions</span>

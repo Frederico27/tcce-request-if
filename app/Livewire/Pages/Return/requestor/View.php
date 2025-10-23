@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Return\requestor;
 use Akhaled\LivewireSweetalert\Confirm;
 use App\Models\TransactionAttachment;
 use App\Models\TransactionDetails;
+use App\Models\TransactionImageActivity;
 use App\Models\Transactions;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -25,17 +26,23 @@ class View extends Component
             abort(404, 'Transaction not found');
         }
     }
-    
+
     public function render()
     {
 
         $detailReturn = TransactionDetails::with('transactionAttachments', 'subCategory.category')
             ->where('id_transactions', $this->transaction->id_transactions)
             ->get();
-            
-        
+
+        //activity image attachments
+        $activityImages = TransactionImageActivity::with('transactionDetail')
+            ->whereIn('id_transaction_detail', $detailReturn->pluck('id_transaction_detail'))
+            ->get();
+
+
         return view('livewire.pages.return.requestor.view', [
             'detailReturn' => $detailReturn,
+            'activityImages' => $activityImages,
         ]);
     }
 }

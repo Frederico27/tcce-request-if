@@ -134,41 +134,51 @@
 
                     <!-- Table Container -->
                     <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                        <!-- Rows Per Page Filter -->
+                        <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <label for="perPage" class="text-sm text-gray-700">Show</label>
+                                    <select wire:model.live="perPage" id="perPage"
+                                        class="block w-20 pl-3 pr-8 py-1.5 text-sm border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md bg-white">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="{{ $transactions->total() }}">All</option>
+                                    </select>
+                                    <span class="text-sm text-gray-700">entries</span>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <x-sortable-header field="id_transactions" :sortField="$sortField" :sortDirection="$sortDirection">
                                             ID Transaksi
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        </x-sortable-header>
+                                        <x-sortable-header field="action" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Aksi Transaksi
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        </x-sortable-header>
+                                        <x-sortable-header field="description" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Deskripsi
-                                        </th>
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        </x-sortable-header>
+                                        <x-sortable-header field="amount" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Nominal
-                                        </th>
-
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        </x-sortable-header>
+                                        <x-sortable-header field="requested_by" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Di Request oleh
-                                        </th>
+                                        </x-sortable-header>
 
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <x-sortable-header field="created_at" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Tanggal
-                                        </th>
+                                        </x-sortable-header>
 
-                                        <th scope="col"
-                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <x-sortable-header field="status" :sortField="$sortField" :sortDirection="$sortDirection">
                                             Status
-                                        </th>
+                                        </x-sortable-header>
 
                                         <th scope="col" class="relative px-6 py-3">
                                             <span class="sr-only">Actions</span>
