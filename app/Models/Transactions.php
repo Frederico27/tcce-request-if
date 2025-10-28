@@ -27,7 +27,17 @@ class Transactions extends Model
         'to_user_id',
         'requested_by',
         'approved_by',
+        'approved_at',
+        'rejected_by',
+        'rejected_at',
+        'rejection_reason',
         'parent_transaction_id'
+    ];
+
+    protected $casts = [
+        'approved_by' => 'array',
+        'approved_at' => 'datetime',
+        'rejected_at' => 'datetime',
     ];
 
     public function fromUser()

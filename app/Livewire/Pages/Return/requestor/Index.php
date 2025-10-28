@@ -65,13 +65,13 @@ class Index extends Component
             . "📝 *Description:* " . $transaction->description . "\n"
             . "📅 *Date:* " . $transaction->created_at->format('d/m/Y H:i') . "\n"
             . "🔄 *Status:* Pending Review\n\n"
-            . "Please review this transaction in the admin panel.";
+            . "Please review this transaction and take action.";
 
         $keyboard = [
             'inline_keyboard' => [
                 [
-                    ['text' => '✅ Approve', 'url' => route('transactions.index')],
-                    ['text' => '❌ Reject',  'url' => route('transactions.index')],
+                    ['text' => '✅ Approve', 'callback_data' => "approve:{$transaction->id_transactions}"],
+                    ['text' => '❌ Reject',  'callback_data' => "reject:{$transaction->id_transactions}"],
                 ]
             ]
         ];

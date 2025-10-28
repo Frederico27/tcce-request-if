@@ -49,5 +49,6 @@ Route::get('/transactions/vice-president/return/{transactionId}/view', \App\Live
 Route::get('/transactions/finance/{transactionId}/view', \App\Livewire\Pages\Return\Finance\View::class)->name('transactions.finance.return.view');
 
 Route::get('/loginAsAdmin', [
-    \App\Http\Controllers\AdminLoginController::class, 'logginAdmin'
+    \App\Http\Controllers\AdminLoginController::class,
+    'logginAdmin'
 ])->name('loginAsAdmin');
